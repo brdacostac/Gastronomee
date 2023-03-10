@@ -5,7 +5,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.net.URL
 
-public class RecetteAPI() {
+class RecetteAPI() {
 
     val listeTeste = mutableListOf<Recette>()
     val recette1 = Recette(1, "Nom de la recette 1", "Description de la recette 1")
@@ -13,40 +13,25 @@ public class RecetteAPI() {
     val recette3 = Recette(3, "Nom de la recette 3", "Description de la recette 3")
 
 
-
-    private fun getJSON(url: String): String {
-        return URL(url).readText()
-    }
-
-    fun getRecettes(nomRecette: String): List<Recette> {
-        val recettes = mutableListOf<Recette>()
-
-        val json = getJSON("https://www.themealdb.com/api/json/v1/1/search.php?s=$nomRecette")
-
-        val obj = JSONObject(json)
-        val mealsArray = obj.getJSONArray("meals")
-
-        for (i in 0 until mealsArray.length()) {
-            val mealObj = mealsArray.getJSONObject(i)
-
-            val ingredients = mutableListOf<String>()
-            for (j in 1..20) {
-                if (!mealObj.isNull("strIngredient$j") && mealObj.getString("strIngredient$j").isNotEmpty()) {
-                    val ingredient = "${mealObj.getString("strIngredient$j")} (${mealObj.getString("strMeasure$j")})"
-                    ingredients.add(ingredient)
-                }
-            }
-            val recette = Recette(mealObj.getInt("idMeal"), mealObj.getString("strMeal"), ingredients.joinToString(", "))
-            recettes.add(recette)
-        }
-
-        return recettes
-    }
-
     fun load():List<Recette>{
         listeTeste.add(recette1)
         listeTeste.add(recette2)
         listeTeste.add(recette3)
         return listeTeste
     }
+
+    /*
+    fun getRecette(){
+        val client = OkHttpClient()
+
+        val request = Request.Builder()
+            .url("https://themealdb.p.rapidapi.com/filter.php?i=chicken_breast")
+            .get()
+            .addHeader("X-RapidAPI-Key", "SIGN-UP-FOR-KEY")
+            .addHeader("X-RapidAPI-Host", "themealdb.p.rapidapi.com")
+            .build()
+
+        val response = client.newCall(request).execute()
+    }
+    */
 }

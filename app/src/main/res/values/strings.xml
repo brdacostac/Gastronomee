@@ -4,4 +4,6 @@
     <string name="sign_in">Sign in</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
+    <string name="cook_eat"><![CDATA[Cook & Eat]]></string>
+    <string name="search">Search</string>
 </resources>
