@@ -9,7 +9,6 @@ import fr.iut.androidproject.stub.RecetteAPI
 import fr.iut.androidproject.view.adapter.MonAdapter
 
 class MainActivity : AppCompatActivity() {
-    //private var stub = RecetteAPI().getRecettes("Arrabiata")
     private var stub = RecetteAPI().load()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

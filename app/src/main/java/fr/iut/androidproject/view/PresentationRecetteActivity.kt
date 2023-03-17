@@ -1,10 +1,13 @@
 package fr.iut.androidproject.view
 
+import UserRepository
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import fr.iut.androidproject.R
+import fr.iut.androidproject.entity.User
 
 class PresentationRecetteActivity : AppCompatActivity() {
     private lateinit var recipeImage: ImageView
@@ -21,6 +24,10 @@ class PresentationRecetteActivity : AppCompatActivity() {
     private lateinit var recipeAuthorProfileButton: Button
     private lateinit var recipeAuthorRating: RatingBar
     private lateinit var recipeCommentsButton: Button
+
+    private lateinit var userRepository: UserRepository
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_presentation_recette)
@@ -53,8 +60,6 @@ class PresentationRecetteActivity : AppCompatActivity() {
         val ingredientsAdapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ingredients)
         val utensilsAdapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, utensils)
 
-        // recipeIngredientsList.adapter = ingredientsAdapter
-        // recipeUtensilsList.adapter = utensilsAdapter
 
         recipeAuthorImage.setImageResource(R.drawable.profile)
         recipeAuthorName.text = "Nom de l'auteur"
@@ -69,5 +74,12 @@ class PresentationRecetteActivity : AppCompatActivity() {
         recipeCommentsButton.setOnClickListener {
             // à faire
         }
+        userRepository = UserRepository(this)
+
+        val user = User(1,"John Doe", "johndoe", "password")
+        userRepository.insertUser(user)
+
+        val users = userRepository.getAllUsers()
     }
+
 }

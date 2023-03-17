@@ -1,7 +1,16 @@
 <resources>
-    <string name="app_name">AndroidProject</string>
+    <string name="app_name">Gastronomee</string>
+
+    <!-- Register and login -->
+
     <string name="username">Username</string>
-    <string name="sign_in">Sign in</string>
+    <string name="fullname">Fullname</string>
+    <string name="fullname_hint">Enter your fullname here</string>
+    <string name="username_hint">Enter your username here</string>
     <string name="password">Password</string>
+    <string name="password_hint">Enter your password here</string>
+    <string name="register_button">Register</string>
+
+    <string name="sign_in">Sign in</string>
     <string name="login">Login</string>
 </resources>
