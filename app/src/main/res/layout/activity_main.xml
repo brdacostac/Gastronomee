@@ -31,7 +31,7 @@
         android:layout_marginTop="32dp"
         android:text="Hi Bruno"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        android:textColor="#EC7649"
+        android:textColor="#E63A3A"
         android:textSize="30dp"
 
         android:textStyle="bold"

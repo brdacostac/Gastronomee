@@ -1,9 +1,13 @@
 package fr.iut.androidproject.stub
 
 import fr.iut.androidproject.model.Recette
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.json.JSONArray
 import org.json.JSONObject
+import retrofit2.Retrofit
 import java.net.URL
+
 
 class RecetteAPI() {
 
@@ -20,18 +24,5 @@ class RecetteAPI() {
         return listeTeste
     }
 
-    /*
-    fun getRecette(){
-        val client = OkHttpClient()
-
-        val request = Request.Builder()
-            .url("https://themealdb.p.rapidapi.com/filter.php?i=chicken_breast")
-            .get()
-            .addHeader("X-RapidAPI-Key", "SIGN-UP-FOR-KEY")
-            .addHeader("X-RapidAPI-Host", "themealdb.p.rapidapi.com")
-            .build()
-
-        val response = client.newCall(request).execute()
-    }
-    */
 }
+
