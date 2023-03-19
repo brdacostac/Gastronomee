@@ -1,4 +1,4 @@
 package fr.iut.androidproject.model
 
-class Recette(val id: Int, val nom: String, val description: String) {
+class Recette(val id: String, val nom: String, val description: String) {
 }

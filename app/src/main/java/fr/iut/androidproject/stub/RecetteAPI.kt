@@ -1,20 +1,15 @@
 package fr.iut.androidproject.stub
 
 import fr.iut.androidproject.model.Recette
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import org.json.JSONArray
-import org.json.JSONObject
-import retrofit2.Retrofit
 import java.net.URL
 
 
 class RecetteAPI() {
 
     val listeTeste = mutableListOf<Recette>()
-    val recette1 = Recette(1, "Nom de la recette 1", "Description de la recette 1")
-    val recette2 = Recette(2, "Nom de la recette 2", "Description de la recette 2")
-    val recette3 = Recette(3, "Nom de la recette 3", "Description de la recette 3")
+    val recette1 = Recette("1", "Nom de la recette 1", "Description de la recette 1")
+    val recette2 = Recette("2", "Nom de la recette 2", "Description de la recette 2")
+    val recette3 = Recette("3", "Nom de la recette 3", "Description de la recette 3")
 
 
     fun load():List<Recette>{
