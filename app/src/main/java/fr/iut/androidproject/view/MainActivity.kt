@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import fr.iut.androidproject.R
 import fr.iut.androidproject.network.Recette
-
 import fr.iut.androidproject.network.RecetteApi
+
 import fr.iut.androidproject.view.adapter.MonAdapter
 import kotlinx.coroutines.launch
 
@@ -39,12 +39,49 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    /*
+    private val categories: Unit
+        private get() {
+            AndroidNetworking.get(Api.Categories)
+                .setPriority(Priority.HIGH)
+                .build()
+                .getAsJSONObject(object : JSONObjectRequestListener {
+                    override fun onResponse(response: JSONObject) {
+                        try {
+                            progressDialog!!.dismiss()
+                            val playerArray = response.getJSONArray("categories")
+                            for (i in 0 until playerArray.length()) {
+
+                                val temp = playerArray.getJSONObject(i)
+                                val dataApi = ModelMain()
+                                dataApi.strCategory = temp.getString("strCategory")
+                                dataApi.strCategoryThumb = temp.getString("strCategoryThumb")
+                                dataApi.strCategoryDescription = temp.getString("strCategoryDescription")
+                                modelMain.add(dataApi)
+                                showCategories()
+                            }
+                        } catch (e: JSONException) {
+                            e.printStackTrace()
+                            Toast.makeText(this@MainActivity,
+                                "Gagal menampilkan data!", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                    override fun onError(anError: ANError) {
+                        progressDialog!!.dismiss()
+                        Toast.makeText(this@MainActivity, "No internet connection!", Toast.LENGTH_SHORT).show()
+                    }
+                })
+        }
+
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         adapter = MonAdapter(emptyList())
-        findViewById<RecyclerView>(R.id.mealList).adapter = adapter
-        findViewById<RecyclerView>(R.id.mealList).layoutManager = LinearLayoutManager(this)
+        //findViewById<RecyclerView>(R.id.mealList).adapter = adapter
+        //findViewById<RecyclerView>(R.id.mealList).layoutManager = LinearLayoutManager(this)
+        //AndroidNetworking.initialize(getApplicationContext());
         getRecettes()
     }
 
