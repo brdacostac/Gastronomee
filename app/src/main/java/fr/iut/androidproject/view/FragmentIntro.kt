@@ -1,4 +1,4 @@
-package fr.iut.androidproject
+package fr.iut.androidproject.view
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

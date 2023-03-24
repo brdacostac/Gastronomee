@@ -5,55 +5,57 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import fr.iut.androidproject.network.Recette
+import fr.iut.androidproject.network.RecetteApi
+import fr.iut.androidproject.view.adapter.MonAdapter
+import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [FragmentPrincipal.newInstance] factory method to
- * create an instance of this fragment.
- */
 class FragmentPrincipal : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
+    private var recettes = mutableListOf<fr.iut.androidproject.model.Recette>()
+    private val _status = MutableLiveData<String>()
+    private lateinit var adapter: MonAdapter
+    private lateinit var mealList: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
 
+        adapter = MonAdapter(recettes)
+        getRecettes()
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main, container, false)
+        val rootView = inflater.inflate(R.layout.fragment_main, container, false)
+        mealList = rootView.findViewById(R.id.mealList)
+        mealList.adapter = adapter
+        mealList.layoutManager = LinearLayoutManager(context)
+        return rootView
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment fragmentLogin.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            FragmentPrincipal().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    private fun getRecettes() {
+        lifecycleScope.launch {
+            try {
+                val listResult = RecetteApi.retrofitService.getRecettes()
+                _status.value = "Success: ${listResult.meals.size} C'est bon"
+                recettes.addAll(recettes)
+                adapter.updateList(listResult.meals.map {
+                    fr.iut.androidproject.model.Recette(
+                        it.idMeal,
+                        it.strMeal,
+                        it.strInstructions
+                    )
+                })
+            } catch (e: Exception) {
+                _status.value = "Failure: ${e.message}"
             }
+        }
     }
+
 }
+
