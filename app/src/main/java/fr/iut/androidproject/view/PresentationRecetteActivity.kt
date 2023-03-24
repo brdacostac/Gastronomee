@@ -1,9 +1,10 @@
-package fr.iut.androidproject
+package fr.iut.androidproject.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
+import fr.iut.androidproject.R
 
 class PresentationRecetteActivity : AppCompatActivity() {
     private lateinit var recipeImage: ImageView
