@@ -1,25 +1,25 @@
 package fr.iut.androidproject
 
 import androidx.room.*
-import fr.iut.androidproject.entity.User
+import fr.iut.androidproject.entity.EntityUser
 
 // Cette iterface contient les méthodes pour interagir avec la table user
 
 @Dao
 interface UserDao {
     @Query("SELECT * FROM users")
-    fun getAllUsers(): List<User>
+    suspend fun getAllUsers(): List<EntityUser>
 
     @Insert
-    fun insertUser(user: User)
+    suspend fun insertUser(entityUser: EntityUser)
 
     @Update
-    fun updateUser(user: User)
+    suspend fun updateUser(entityUser: EntityUser)
 
     @Delete
-    fun deleteUser(user: User)
+    suspend fun deleteUser(entityUser: EntityUser)
 
     @Query("SELECT * FROM users WHERE username = :username AND password = :password")
-    fun getUserByUsernameAndPassword(username: String, password: String): User?
+    suspend fun getUserByUsernameAndPassword(username: String, password: String): EntityUser?
 }
 

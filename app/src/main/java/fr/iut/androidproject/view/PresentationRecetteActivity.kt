@@ -3,11 +3,10 @@ package fr.iut.androidproject.view
 import UserRepository
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import fr.iut.androidproject.R
-import fr.iut.androidproject.entity.User
+import fr.iut.androidproject.entity.EntityUser
 
 class PresentationRecetteActivity : AppCompatActivity() {
     private lateinit var recipeImage: ImageView
@@ -74,12 +73,6 @@ class PresentationRecetteActivity : AppCompatActivity() {
         recipeCommentsButton.setOnClickListener {
             // à faire
         }
-        userRepository = UserRepository(this)
-
-        val user = User(1,"John Doe", "johndoe", "password")
-        userRepository.insertUser(user)
-
-        val users = userRepository.getAllUsers()
     }
 
 }

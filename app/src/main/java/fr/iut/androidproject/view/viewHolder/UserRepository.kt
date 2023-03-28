@@ -1,29 +1,29 @@
 import android.content.Context
 import fr.iut.androidproject.database.AppDatabase
-import fr.iut.androidproject.entity.User
+import fr.iut.androidproject.entity.EntityUser
 
 // Inclut les fonctions pour accéder, modifier, ajouter ou supprimer des utilisateurs de la BD
 
 class UserRepository(context: Context) {
     private val userDao = AppDatabase.getInstance(context).userDao()
 
-    fun getAllUsers(): List<User> {
+    suspend fun getAllUsers(): List<EntityUser> {
         return userDao.getAllUsers()
     }
 
-    fun insertUser(user: User) {
-        userDao.insertUser(user)
+    suspend fun insertUser(entityUser: EntityUser) {
+        userDao.insertUser(entityUser)
     }
 
-    fun updateUser(user: User) {
-        userDao.updateUser(user)
+    suspend fun updateUser(entityUser: EntityUser) {
+        userDao.updateUser(entityUser)
     }
 
-    fun deleteUser(user: User) {
-        userDao.deleteUser(user)
+    suspend fun deleteUser(entityUser: EntityUser) {
+        userDao.deleteUser(entityUser)
     }
 
-    fun getUserByUsernameAndPassword(username: String, password: String): User? {
+    suspend fun getUserByUsernameAndPassword(username: String, password: String): EntityUser? {
         return userDao.getUserByUsernameAndPassword(username, password)
     }
 }

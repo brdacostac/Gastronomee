@@ -1,23 +1,29 @@
 package fr.iut.androidproject.view
 
-import UserRepository
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import fr.iut.androidproject.R
-import fr.iut.androidproject.entity.User
+import fr.iut.androidproject.UserDao
+import fr.iut.androidproject.database.AppDatabase
+import fr.iut.androidproject.entity.EntityUser
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlin.math.log
 
 class RegisterActivity : AppCompatActivity() {
-    private lateinit var userRepository: UserRepository
+
+    private lateinit var userDao: UserDao
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        userRepository = UserRepository(this)
+        userDao = AppDatabase.getInstance(this).userDao()
 
         val fullnameInput = findViewById<EditText>(R.id.fullname_input)
         val usernameInput = findViewById<EditText>(R.id.username_input)
@@ -32,12 +38,13 @@ class RegisterActivity : AppCompatActivity() {
             if (fullname.isEmpty() || username.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Veuillez remplir tous les champs", Toast.LENGTH_SHORT).show()
             } else {
-                val user = User(0, fullname, username, password)
-                userRepository.insertUser(user)
+                val entityUser = EntityUser(fullname = fullname, username = username, password = password)
+                GlobalScope.launch {
+                    userDao.insertUser(entityUser)
+                }
                 Toast.makeText(this, "Compte créé avec succès!", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, MainActivity::class.java)
+                val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
-                finish()
             }
         }
     }

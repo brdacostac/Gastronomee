@@ -5,11 +5,11 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import fr.iut.androidproject.UserDao
-import fr.iut.androidproject.entity.User
+import fr.iut.androidproject.entity.EntityUser
 
 // AppDatabase contient la config de la BD pour accèder aux données persistantes
 
-@Database(entities = [User::class], version = 1)
+@Database(entities = [EntityUser::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
 
