@@ -12,7 +12,6 @@ private val moshi = Moshi.Builder()
     .add(KotlinJsonAdapterFactory())
     .build()
 
-
 private val retrofit = Retrofit.Builder()
     .addConverterFactory(MoshiConverterFactory.create(moshi))
     .baseUrl(BASE_URL)
@@ -20,9 +19,11 @@ private val retrofit = Retrofit.Builder()
 
 
 interface RecetteApiService {
-
     @GET("search.php?f=a")
     suspend fun getRecettes() : Meal
+
+    @GET("categories.php")
+    suspend fun getCategories() : Categorie
 }
 
 object RecetteApi {

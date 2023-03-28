@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import fr.iut.androidproject.R
+import fr.iut.androidproject.model.Category
 import fr.iut.androidproject.model.Recette
 
 

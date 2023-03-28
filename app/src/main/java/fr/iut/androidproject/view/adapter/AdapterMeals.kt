@@ -7,7 +7,7 @@ import fr.iut.androidproject.R
 import fr.iut.androidproject.model.Recette
 import fr.iut.androidproject.view.viewHolder.MonViewHolder
 
-class MonAdapter(var mealList : List<Recette> ) : Adapter<MonViewHolder>() {
+class AdapterMeals(var mealList : List<Recette> ) : Adapter<MonViewHolder>() {
     override fun onBindViewHolder(holder: MonViewHolder, position: Int) {
         val recette = mealList[position]
         holder.bind(recette)
