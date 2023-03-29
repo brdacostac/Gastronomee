@@ -33,16 +33,49 @@ class RegisterActivity : AppCompatActivity() {
             val username = usernameInput.text.toString()
             val password = passwordInput.text.toString()
 
-            if (fullname.isEmpty() || username.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Veuillez remplir tous les champs", Toast.LENGTH_SHORT).show()
-            } else {
-                val entityUser = EntityUser(fullname = fullname, username = username, password = password)
+            var isValid = true
+
+            if (fullname.isEmpty()) {
+                fullnameInput.error = "Please enter your fullname"
+                isValid = false
+            } else if (fullname.length > 30) {
+                fullnameInput.error = "Fullname cannot exceed 30 characters"
+                isValid = false
+            }
+
+            if (username.isEmpty()) {
+                usernameInput.error = "Please enter your username"
+                isValid = false
+            } else if (username.length > 10) {
+                usernameInput.error = "Username cannot exceed 10 characters"
+                isValid = false
+            }
+
+            if (password.isEmpty()) {
+                passwordInput.error = "Please enter your password"
+                isValid = false
+            } else if (password.length < 2) {
+                passwordInput.error = "Password must be at least 2 characters long"
+                isValid = false
+            }
+
+            if (isValid) {
                 GlobalScope.launch {
-                    userDao.insertUser(entityUser)
+                    val user = userDao.getUserByUsername(username)
+                    if (user == null) {
+                        val entityUser = EntityUser(fullname = fullname, username = username, password = password)
+                        userDao.insertUser(entityUser)
+                        runOnUiThread {
+                            Toast.makeText(this@RegisterActivity, "Account created successfully!", Toast.LENGTH_SHORT).show()
+                            val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
+                            startActivity(intent)
+                        }
+                    } else {
+                        runOnUiThread {
+                            usernameInput.error = "This username is already taken"
+                        }
+                    }
                 }
-                Toast.makeText(this, "Compte créé avec succès!", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
             }
         }
     }

@@ -52,7 +52,19 @@
                 android:value="" />
         </activity>
 
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="fr.iut.androidproject.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/image_file" />
+        </provider>
+
+
     </application>
+
 
     <!-- Permissions nécessaires pour utiliser la caméra et stocker les images dans le stockage externe -->
     <uses-permission android:name="android.permission.CAMERA" />

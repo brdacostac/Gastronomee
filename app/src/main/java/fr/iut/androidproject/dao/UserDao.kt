@@ -19,6 +19,9 @@ interface UserDao {
     @Delete
     suspend fun deleteUser(entityUser: EntityUser)
 
+    @Query("SELECT * FROM users WHERE username = :username")
+    suspend fun getUserByUsername(username: String): EntityUser?
+
     @Query("SELECT * FROM users WHERE username = :username AND password = :password")
     suspend fun getUserByUsernameAndPassword(username: String, password: String): EntityUser?
 }
