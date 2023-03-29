@@ -1,4 +1,4 @@
-package fr.iut.androidproject
+package fr.iut.androidproject.dao
 
 import androidx.room.*
 import fr.iut.androidproject.entity.EntityUser

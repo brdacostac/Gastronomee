@@ -1,6 +1,5 @@
 package fr.iut.androidproject.view
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -8,11 +7,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import fr.iut.androidproject.R
-import fr.iut.androidproject.UserDao
+import fr.iut.androidproject.dao.UserDao
 import fr.iut.androidproject.database.AppDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {

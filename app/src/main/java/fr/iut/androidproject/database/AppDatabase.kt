@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import fr.iut.androidproject.UserDao
+import fr.iut.androidproject.dao.UserDao
 import fr.iut.androidproject.entity.EntityUser
 
 // AppDatabase contient la config de la BD pour accèder aux données persistantes
