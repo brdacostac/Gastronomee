@@ -32,6 +32,7 @@ class FragmentPrincipal : Fragment() {
 
         adapterMeals = AdapterMeals(recettes)
         adpterCategorys = AdapterCategorys(categories)
+
         getRecettes()
         getCategorys()
     }
@@ -46,7 +47,7 @@ class FragmentPrincipal : Fragment() {
 
         categoryList = rootView.findViewById(R.id.categoryList)
         categoryList.adapter = adpterCategorys
-        categoryList.layoutManager = LinearLayoutManager(context)
+        categoryList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
         return rootView
     }
