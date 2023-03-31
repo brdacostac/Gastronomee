@@ -17,7 +17,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -30,6 +30,7 @@
                     android:layout_height="67dp"
                     android:layout_marginTop="32dp"
                     android:layout_marginBottom="24dp"
+                    android:src="@drawable/profile"
                     app:layout_constraintBottom_toTopOf="@+id/editTextTextPersonName"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.88"
@@ -116,12 +117,12 @@
                     app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
 
                 <TextView
-                    android:id="@+id/popular"
+                    android:id="@+id/recommendedName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="32dp"
                     android:layout_marginLeft="32dp"
-                    android:text="Popular"
+                    android:text="Recommended"
                     android:textColor="#2C2C2C"
                     android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -129,7 +130,7 @@
                     tools:textStyle="bold" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/mealList"
+                    android:id="@+id/recommended"
                     android:layout_width="409dp"
                     android:layout_height="match_parent"
                     android:background="#FFFFFF"
@@ -137,7 +138,7 @@
                     android:paddingLeft="22dp"
                     android:paddingRight="22dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/popular" />
+                    app:layout_constraintTop_toBottomOf="@+id/recommendedName" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>

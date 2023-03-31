@@ -10,8 +10,8 @@ import fr.iut.androidproject.model.Category
 
 
 class CategoryViewHolder(itemView: View) : ViewHolder(itemView){
-    private val nomTextView: TextView = itemView.findViewById(R.id.nomCategory)
-    private val imageTextView: ImageView = itemView.findViewById(R.id.imageCategory)
+    private val nomTextView: TextView = itemView.findViewById(R.id.nomRecommended)
+    private val imageTextView: ImageView = itemView.findViewById(R.id.imageRecommended)
 
     fun bind(category: Category) {
         nomTextView.text = category.nom
