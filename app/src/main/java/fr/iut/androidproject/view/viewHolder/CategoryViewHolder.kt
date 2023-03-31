@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.squareup.picasso.Picasso
 import fr.iut.androidproject.R
 import fr.iut.androidproject.model.Category
-import fr.iut.androidproject.model.Recette
 
 
 class CategoryViewHolder(itemView: View) : ViewHolder(itemView){
