@@ -30,7 +30,9 @@ class AdapterRecommended(var mealList : List<Recette> ) : Adapter<RecommendedVie
                     "strInstructions" to recette.description,
                     "strMealThumb" to recette.image,
                     "strArea" to recette.area,
-                    "strCategory" to recette.category
+                    "strCategory" to recette.category,
+                    "listeIngredients" to recette.ingredients,
+                    "listeMesures" to recette.measures
                 )
 
                 val navController = Navigation.findNavController(it)

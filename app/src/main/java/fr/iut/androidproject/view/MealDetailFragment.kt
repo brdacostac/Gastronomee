@@ -7,20 +7,46 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import fr.iut.androidproject.R
+import fr.iut.androidproject.view.adapter.AdapterIngredientsMeasure
+import fr.iut.androidproject.view.adapter.AdapterMeals
+import fr.iut.androidproject.view.adapter.AdapterRecommended
 
 
 class MealDetailFragment : Fragment() {
 
+    private lateinit var adapterIngredients: AdapterIngredientsMeasure
+    private lateinit var adapterMeasures: AdapterIngredientsMeasure
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val listIngredients = arguments?.getStringArrayList("listeIngredients")
+        val kotlinListIngredients = ArrayList(listIngredients ?: listOf())
 
+        val listMeasures = arguments?.getStringArrayList("listeMesures")
+        val kotlinListMeasures = ArrayList(listMeasures ?: listOf())
+
+        adapterIngredients = AdapterIngredientsMeasure(kotlinListIngredients)
+        adapterMeasures = AdapterIngredientsMeasure(kotlinListMeasures)
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val rootView = inflater.inflate(R.layout.fragment_mealdetail, container, false)
 
-        return inflater.inflate(R.layout.fragment_mealdetail, container, false)
+        val recyclerViewIngrediets = rootView.findViewById<RecyclerView>(R.id.recyclerViewIngredients)
+        recyclerViewIngrediets.adapter = adapterIngredients
+        recyclerViewIngrediets.layoutManager = LinearLayoutManager(context)
+
+        val recyclerViewMeasures= rootView.findViewById<RecyclerView>(R.id.recyclerViewMeasures)
+        recyclerViewMeasures.adapter = adapterMeasures
+        recyclerViewMeasures.layoutManager = LinearLayoutManager(context)
+
+        return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -31,6 +57,7 @@ class MealDetailFragment : Fragment() {
         val strMealThumb = arguments?.getString("strMealThumb")
         val strArea = arguments?.getString("strArea")
         val strCategory = arguments?.getString("strCategory")
+
 
         val textViewTitle: TextView = view.findViewById(R.id.titleMeal)
         textViewTitle.text = "$strMeal"
