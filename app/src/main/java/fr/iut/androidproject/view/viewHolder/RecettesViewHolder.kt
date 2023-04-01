@@ -8,11 +8,14 @@ import fr.iut.androidproject.model.Recette
 
 
 class RecettesViewHolder(itemView: View) : ViewHolder(itemView){
-    private val titleTextView: TextView = itemView.findViewById(R.id.nom)
-    private val descriptionTextView: TextView = itemView.findViewById(R.id.description)
+    private val titleTextView: TextView = itemView.findViewById(R.id.titleMeal)
+    private val descriptionTextView: TextView = itemView.findViewById(R.id.descriptionMeal)
 
     fun bind(recette: Recette) {
         titleTextView.text = recette.nom
         descriptionTextView.text = recette.description
+    }
+    fun bind(string: String) {
+        descriptionTextView.text = string
     }
 }
