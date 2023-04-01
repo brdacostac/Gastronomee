@@ -22,6 +22,9 @@ interface RecetteApiService {
     @GET("search.php?f=a")
     suspend fun getRecettes() : Meal
 
+    @GET("random.php")
+    suspend fun getRecommended() : Meal
+
     @GET("categories.php")
     suspend fun getCategories() : Categorie
 }

@@ -17,7 +17,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -30,6 +30,7 @@
                     android:layout_height="67dp"
                     android:layout_marginTop="32dp"
                     android:layout_marginBottom="24dp"
+                    android:src="@drawable/profile"
                     app:layout_constraintBottom_toTopOf="@+id/editTextTextPersonName"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.88"
@@ -80,7 +81,7 @@
                     android:text="Hi Bruno"
                     android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                     android:textColor="#E63A3A"
-                    android:textSize="30dp"
+                    android:textSize="30sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@+id/editTextTextPersonName"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -91,12 +92,13 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/categoryList"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                    android:layout_width="409dp"
+                    android:layout_height="match_parent"
                     android:background="#FFFFFF"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    android:clipToPadding="false"
+                    android:paddingLeft="22dp"
+                    android:paddingRight="22dp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/categories" />
 
@@ -115,12 +117,12 @@
                     app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
 
                 <TextView
-                    android:id="@+id/popular"
+                    android:id="@+id/recommendedName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="32dp"
                     android:layout_marginLeft="32dp"
-                    android:text="Popular"
+                    android:text="Recommended"
                     android:textColor="#2C2C2C"
                     android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -128,15 +130,17 @@
                     tools:textStyle="bold" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/mealList"
-                    android:layout_width="match_parent"
-                    android:layout_height="655dp"
+                    android:id="@+id/recommended"
+                    android:layout_width="409dp"
+                    android:layout_height="match_parent"
+                    android:background="#FFFFFF"
+                    android:clipToPadding="false"
+                    android:paddingLeft="22dp"
+                    android:paddingRight="22dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/popular" />
+                    app:layout_constraintTop_toBottomOf="@+id/recommendedName" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
     </ScrollView>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
