@@ -16,11 +16,19 @@
     </fragment>
     <fragment
         android:id="@+id/fragmentLogin"
-        android:name="fr.iut.androidproject.FragmentPrincipal"
+        android:name="fr.iut.androidproject.view.FragmentPrincipal"
         android:label="fragment_login"
         tools:layout="@layout/fragment_main" >
         <action
             android:id="@+id/action_fragmentLogin_to_mainFragment"
             app:destination="@id/mainFragment" />
+        <action
+            android:id="@+id/action_fragmentLogin_to_mealDetailFragment"
+            app:destination="@id/mealDetailFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/mealDetailFragment"
+        android:name="fr.iut.androidproject.view.MealDetailFragment"
+        android:label="fragment_mealdetail"
+        tools:layout="@layout/fragment_mealdetail" />
 </navigation>

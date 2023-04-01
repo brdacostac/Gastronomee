@@ -1,4 +1,4 @@
-package fr.iut.androidproject
+package fr.iut.androidproject.view
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,9 +9,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import fr.iut.androidproject.R
 import fr.iut.androidproject.network.RecetteApi
 import fr.iut.androidproject.view.adapter.AdapterCategorys
-import fr.iut.androidproject.view.adapter.AdapterMeals
 import fr.iut.androidproject.view.adapter.AdapterRecommended
 import kotlinx.coroutines.launch
 
