@@ -53,12 +53,11 @@ class FragmentPrincipal : Fragment() {
         return rootView
     }
 
-    private fun getRecommended() {
+    private fun transformListIngredients() : MutableList<String>{
+        val listIngredients = mutableListOf<String>()
         lifecycleScope.launch {
             try {
                 val listResult = RecetteApi.retrofitService.getRecommended()
-                val listIngredients = mutableListOf<String>()
-                val listMeasures = mutableListOf<String>()
                 for (recette in listResult.meals) {
                     if(recette.strIngredient1.isNotEmpty() && recette.strIngredient1.isNotBlank()) listIngredients.add(recette.strIngredient1)
                     if(recette.strIngredient2.isNotEmpty() && recette.strIngredient2.isNotBlank()) listIngredients.add(recette.strIngredient2)
@@ -80,6 +79,21 @@ class FragmentPrincipal : Fragment() {
                     if(recette.strIngredient18.isNotEmpty() && recette.strIngredient18.isNotBlank()) listIngredients.add(recette.strIngredient18)
                     if(recette.strIngredient19.isNotEmpty() && recette.strIngredient19.isNotBlank()) listIngredients.add(recette.strIngredient19)
                     if(recette.strIngredient20.isNotEmpty() && recette.strIngredient20.isNotBlank()) listIngredients.add(recette.strIngredient20)
+                }
+            } catch (e: Exception) {
+                _status.value = "Failure: ${e.message}"
+            }
+
+        }
+        return listIngredients
+    }
+
+    private fun transformListMeasures() : MutableList<String>{
+        val listMeasures = mutableListOf<String>()
+        lifecycleScope.launch {
+            try {
+                val listResult = RecetteApi.retrofitService.getRecommended()
+                for (recette in listResult.meals) {
                     if(recette.strMeasure1.isNotEmpty() && recette.strMeasure1.isNotBlank()) listMeasures.add(recette.strMeasure1)
                     if(recette.strMeasure2.isNotEmpty() && recette.strMeasure2.isNotBlank()) listMeasures.add(recette.strMeasure2)
                     if(recette.strMeasure3.isNotEmpty() && recette.strMeasure3.isNotBlank()) listMeasures.add(recette.strMeasure3)
@@ -100,7 +114,23 @@ class FragmentPrincipal : Fragment() {
                     if(recette.strMeasure18.isNotEmpty() && recette.strMeasure18.isNotBlank()) listMeasures.add(recette.strMeasure18)
                     if(recette.strMeasure19.isNotEmpty() && recette.strMeasure19.isNotBlank()) listMeasures.add(recette.strMeasure19)
                     if(recette.strMeasure20.isNotEmpty() && recette.strMeasure20.isNotBlank()) listMeasures.add(recette.strMeasure20)
+
                 }
+            } catch (e: Exception) {
+                _status.value = "Failure: ${e.message}"
+            }
+
+        }
+        return listMeasures
+    }
+
+    private fun getRecommended() {
+        lifecycleScope.launch {
+            try {
+                val listResult = RecetteApi.retrofitService.getRecommended()
+                val listIngredients : MutableList<String> = transformListIngredients()
+                val listMeasures : MutableList<String> = transformListMeasures()
+
                 _status.value = "Success: ${listResult.meals.size} C'est bon"
                 recommended.addAll(recommended)
                 adapterRecommended.updateList(listResult.meals.map {
