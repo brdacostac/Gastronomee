@@ -25,10 +25,18 @@
         <action
             android:id="@+id/action_fragmentLogin_to_mealDetailFragment"
             app:destination="@id/mealDetailFragment" />
+        <action
+            android:id="@+id/action_fragmentLogin_to_fragmentAllMealsCategory"
+            app:destination="@id/fragmentAllMealsCategory" />
     </fragment>
     <fragment
         android:id="@+id/mealDetailFragment"
         android:name="fr.iut.androidproject.view.MealDetailFragment"
         android:label="fragment_mealdetail"
         tools:layout="@layout/fragment_mealdetail" />
+    <fragment
+        android:id="@+id/fragmentAllMealsCategory"
+        android:name="fr.iut.androidproject.view.FragmentAllMealsCategory"
+        android:label="fragment_all_meals_category"
+        tools:layout="@layout/fragment_all_meals_category" />
 </navigation>
