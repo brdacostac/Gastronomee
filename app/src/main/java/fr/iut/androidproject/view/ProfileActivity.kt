@@ -1,6 +1,7 @@
 package fr.iut.androidproject.view
 
 import android.Manifest
+import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -15,6 +16,8 @@ import android.provider.MediaStore
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -26,7 +29,6 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-@Suppress("DEPRECATION")
 class ProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +45,13 @@ class ProfileActivity : AppCompatActivity() {
         fullnameTextView.text = "Full Name: $userFullname"
         usernameTextView.text = "Username: $userUsername"
         passwordTextView.text = "Password: $userPassword"
+
+        takePictureLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                saveImageToGallery(photoFile.absolutePath)
+            }
+        }
+
     }
 
     private val REQUEST_IMAGE_CAPTURE = 1
@@ -50,7 +59,9 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var photoURI: Uri
     private lateinit var imageView: ImageView
 
-    fun takePhoto(@Suppress("UNUSED_PARAMETER") view: View) {
+    private lateinit var takePictureLauncher: ActivityResultLauncher<Intent>
+
+    fun onTakePhotoClicked(view: View) {
         val permission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
         if (permission != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
@@ -78,7 +89,7 @@ class ProfileActivity : AppCompatActivity() {
                     )
                     this.photoURI = photoURI
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                    startActivity(takePictureIntent)
+                    takePictureLauncher.launch(takePictureIntent)
                 }
             }
         }
@@ -101,15 +112,6 @@ class ProfileActivity : AppCompatActivity() {
             imageView.setImageBitmap(BitmapFactory.decodeFile(savedImagePath))
         }
     }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            saveImageToGallery(photoFile.absolutePath)
-        }
-    }
-
 
     private fun saveImageToGallery(savedImagePath: String) {
         val photoFile = File(savedImagePath)

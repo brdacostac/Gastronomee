@@ -18,12 +18,10 @@ tools:context=".view.ProfileActivity">
         android:src="@drawable/profile"/>
 
     <Button
-        android:id="@+id/takePhotoButton"
+        android:id="@+id/onTakePhotoClicked"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Prendre une photo"
-        android:layout_marginTop="16dp"
-        android:layout_marginLeft="16dp"
+        android:text="Take Photo"
         android:onClick="takePhoto" />
 
     <TextView
