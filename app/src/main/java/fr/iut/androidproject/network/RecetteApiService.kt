@@ -5,6 +5,8 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 private const val BASE_URL = "https://www.themealdb.com/api/json/v1/1/"
 
@@ -27,6 +29,11 @@ interface RecetteApiService {
 
     @GET("categories.php")
     suspend fun getCategories() : Categorie
+
+    //@GET("filter.php?c={strCategory}")
+    @GET("filter.php")
+    suspend fun getMealsByCategory(@Query("c") category: String) : Meal
+
 }
 
 object RecetteApi {

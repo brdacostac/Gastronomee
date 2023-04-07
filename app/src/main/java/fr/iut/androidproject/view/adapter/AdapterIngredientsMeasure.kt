@@ -19,7 +19,7 @@ class AdapterIngredientsMeasure(var stringList : ArrayList<String> ) : RecyclerV
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecettesViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.celulle_recettes,parent,false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.celulle_ingredientsmeasures,parent,false)
         return RecettesViewHolder(view)
     }
 
