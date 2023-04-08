@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
@@ -63,8 +64,7 @@ class FragmentAllMealsCategory : Fragment() {
         val rootView = inflater.inflate(R.layout.fragment_all_meals_category, container, false)
         mealsList  = rootView.findViewById(R.id.mealsListByCategoryy)
         mealsList.adapter = adapterMeals
-        mealsList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-
+        mealsList.layoutManager = GridLayoutManager(context, 3)
         return rootView
     }
 
