@@ -1,14 +1,32 @@
 package fr.iut.androidproject.view
 
+import android.app.Activity
+import android.content.ContentValues
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
+import android.Manifest
+import android.graphics.BitmapFactory
+import android.widget.Button
+import androidx.core.content.FileProvider
 import fr.iut.androidproject.R
 import fr.iut.androidproject.StubFakeData.StubFakeData
 import fr.iut.androidproject.model.Category
@@ -16,14 +34,20 @@ import fr.iut.androidproject.network.RecetteApi
 import fr.iut.androidproject.view.adapter.AdapterCategorys
 import fr.iut.androidproject.view.adapter.AdapterRecommended
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 class FragmentPrincipal : Fragment() {
 
-    private val stubFakeData = StubFakeData()
+
 
     private var recommended = mutableListOf<fr.iut.androidproject.model.Recette>() //Pour utiliser l'api il faut utiliser cette ligne
     private var categories = mutableListOf<fr.iut.androidproject.model.Category>() //Pour utiliser l'api il faut utiliser cette ligne
 
+    //private val stubFakeData = StubFakeData()
     //private var recommended = stubFakeData.chargeRecommended() //UTILISE DES FAUSSES DONNEES CAR L'API NE FONCTIONNE PLUS
     //private var categories = stubFakeData.chargeCategories() //UTILISE DES FAUSSES DONNEES CAR L'API NE FONCTIONNE PLUS
 
@@ -35,13 +59,26 @@ class FragmentPrincipal : Fragment() {
     private lateinit var recommendedList: RecyclerView
     private lateinit var categoryList: RecyclerView
 
+    private lateinit var takePictureLauncher: ActivityResultLauncher<Intent>
+    private lateinit var photoFile: File
+    private lateinit var imageView: ImageView
+    private val REQUEST_IMAGE_CAPTURE = 1
+    private lateinit var photoURI: Uri
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
 
 
         adapterRecommended = AdapterRecommended(recommended)
         adpterCategorys = AdapterCategorys(categories)
 
+
+        takePictureLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                saveImageToGallery(photoFile.absolutePath)
+            }
+        }
 
         getCategorys() //Pour utiliser l'api il faut utiliser cette ligne
         getRecommended() //Pour utiliser l'api il faut utiliser cette ligne
@@ -51,6 +88,8 @@ class FragmentPrincipal : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_main, container, false)
+
+
         recommendedList = rootView.findViewById(R.id.recommended)
         recommendedList.adapter = adapterRecommended
         recommendedList.layoutManager = LinearLayoutManager(context)
@@ -59,7 +98,94 @@ class FragmentPrincipal : Fragment() {
         categoryList.adapter = adpterCategorys
         categoryList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
+        imageView = rootView.findViewById<ImageView>(R.id.imagePhoto)
+
+        val takePhotoButton = rootView.findViewById<Button>(R.id.photoButton)
+
+        takePhotoButton.setOnClickListener {
+            takePhoto(it)
+        }
+
         return rootView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val fullName = arguments?.getString("USER_FULLNAME")
+
+        val nameTextView = view.findViewById<TextView>(R.id.nameTextView)
+        nameTextView.text = "Hi $fullName"
+
+    }
+
+    fun takePhoto(view: View) {
+        val permission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                REQUEST_IMAGE_CAPTURE
+            )
+        } else {
+            dispatchTakePictureIntent()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_IMAGE_CAPTURE && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            dispatchTakePictureIntent()
+        }
+    }
+    private fun dispatchTakePictureIntent() {
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            takePictureIntent.resolveActivity(requireContext().packageManager)?.also {
+                photoFile = createImageFile()
+                photoFile.also {
+                    val photoURI: Uri = FileProvider.getUriForFile(
+                        requireContext(),
+                        "fr.iut.androidproject.fileprovider",
+                        it
+                    )
+                    this.photoURI = photoURI
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                    takePictureLauncher.launch(takePictureIntent)
+                }
+            }
+        }
+    }
+
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val storageDir: File? = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            "JPEG_${timeStamp}_",
+            ".jpg",
+            storageDir
+        ).apply {
+            val savedImagePath = absolutePath
+            imageView.setImageBitmap(BitmapFactory.decodeFile(savedImagePath))
+        }
+    }
+
+    private fun saveImageToGallery(savedImagePath: String) {
+        val photoFile = File(savedImagePath)
+        val values = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, photoFile.name)
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+            put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+        }
+        val externalUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        val contentResolver = requireContext().contentResolver
+
+        val uri = contentResolver.insert(externalUri, values)
+
+        Picasso.get()
+            .load(uri)
+            .into(imageView)
+        imageView.setImageBitmap(BitmapFactory.decodeFile(savedImagePath))
     }
 
     private fun transformListIngredients() : MutableList<String>{

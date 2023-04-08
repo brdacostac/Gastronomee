@@ -63,8 +63,8 @@ class FragmentIntro : Fragment() {
                         Toast.makeText(requireContext(), "Sucess!", Toast.LENGTH_SHORT).show()
 
                         val bundle = bundleOf(
-                            "USER_ID" to user.fullname,
-                            "USER_FULLNAME" to user.username,
+                            "USER_FULLNAME" to user.fullname,
+                            "USER_NAME" to user.username,
                             "USER_PASSWORD" to user.password
                         )
                         Navigation.findNavController(view).navigate(R.id.action_mainFragment_to_fragmentLogin, bundle)
@@ -74,6 +74,10 @@ class FragmentIntro : Fragment() {
                     }
                 }
             }
+        }
+
+        registerBtn.setOnClickListener {
+            Navigation.findNavController(view).navigate(R.id.action_mainFragment_to_fragmentRegister)
         }
     }
 

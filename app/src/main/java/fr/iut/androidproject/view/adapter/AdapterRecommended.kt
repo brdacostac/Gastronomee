@@ -1,7 +1,6 @@
 package fr.iut.androidproject.view.adapter
 
-import RecommendedViewHolder
-import android.util.Log
+import fr.iut.androidproject.view.viewHolder.RecommendedViewHolder
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.os.bundleOf

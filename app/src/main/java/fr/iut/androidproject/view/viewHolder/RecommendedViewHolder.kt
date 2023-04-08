@@ -1,3 +1,5 @@
+package fr.iut.androidproject.view.viewHolder
+
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
