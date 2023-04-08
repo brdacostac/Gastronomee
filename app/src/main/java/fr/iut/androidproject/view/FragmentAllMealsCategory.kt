@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import fr.iut.androidproject.R
+import fr.iut.androidproject.StubFakeData.StubFakeData
 import fr.iut.androidproject.network.RecetteApi
 import fr.iut.androidproject.view.adapter.AdapterCategorys
 import fr.iut.androidproject.view.adapter.AdapterMeals
@@ -26,6 +27,8 @@ class FragmentAllMealsCategory : Fragment() {
     private val _status = MutableLiveData<String>()
     private var mealsByCategory = mutableListOf<fr.iut.androidproject.model.Recette>()
 
+    private val stubFakeData = StubFakeData()
+
     private lateinit var mealsList: RecyclerView
 
     private lateinit var adapterMeals: AdapterMeals
@@ -36,9 +39,11 @@ class FragmentAllMealsCategory : Fragment() {
         val strCategoryId = arguments?.getString("strCategoryId")
         val strCategory = arguments?.getString("strCategory")
 
+        //mealsByCategory = stubFakeData.getMealsByCategory(strCategory.toString()) // Utilise des fake données car l'api ne marche pas
+
         adapterMeals = AdapterMeals(mealsByCategory)
 
-        getMeals(strCategory.toString())
+        getMeals(strCategory.toString()) // Utilise l'api pour récupérer les données
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

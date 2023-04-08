@@ -10,6 +10,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import fr.iut.androidproject.R
+import fr.iut.androidproject.StubFakeData.StubFakeData
+import fr.iut.androidproject.model.Category
 import fr.iut.androidproject.network.RecetteApi
 import fr.iut.androidproject.view.adapter.AdapterCategorys
 import fr.iut.androidproject.view.adapter.AdapterRecommended
@@ -17,8 +19,13 @@ import kotlinx.coroutines.launch
 
 class FragmentPrincipal : Fragment() {
 
-    private var recommended = mutableListOf<fr.iut.androidproject.model.Recette>()
-    private var categories = mutableListOf<fr.iut.androidproject.model.Category>()
+    private val stubFakeData = StubFakeData()
+
+    private var recommended = mutableListOf<fr.iut.androidproject.model.Recette>() //Pour utiliser l'api il faut utiliser cette ligne
+    private var categories = mutableListOf<fr.iut.androidproject.model.Category>() //Pour utiliser l'api il faut utiliser cette ligne
+
+    //private var recommended = stubFakeData.chargeRecommended() //UTILISE DES FAUSSES DONNEES CAR L'API NE FONCTIONNE PLUS
+    //private var categories = stubFakeData.chargeCategories() //UTILISE DES FAUSSES DONNEES CAR L'API NE FONCTIONNE PLUS
 
     private val _status = MutableLiveData<String>()
 
@@ -31,11 +38,13 @@ class FragmentPrincipal : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         adapterRecommended = AdapterRecommended(recommended)
         adpterCategorys = AdapterCategorys(categories)
 
-        getCategorys()
-        getRecommended()
+
+        getCategorys() //Pour utiliser l'api il faut utiliser cette ligne
+        getRecommended() //Pour utiliser l'api il faut utiliser cette ligne
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
