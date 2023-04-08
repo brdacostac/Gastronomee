@@ -38,5 +38,9 @@
         android:id="@+id/fragmentAllMealsCategory"
         android:name="fr.iut.androidproject.view.FragmentAllMealsCategory"
         android:label="fragment_all_meals_category"
-        tools:layout="@layout/fragment_all_meals_category" />
+        tools:layout="@layout/fragment_all_meals_category" >
+        <action
+            android:id="@+id/action_fragmentAllMealsCategory_to_mealDetailFragment"
+            app:destination="@id/mealDetailFragment" />
+    </fragment>
 </navigation>

@@ -34,6 +34,10 @@ interface RecetteApiService {
     @GET("filter.php")
     suspend fun getMealsByCategory(@Query("c") category: String) : Meal
 
+    @GET("lookup.php")
+    suspend fun getMealById(@Query("i") id: String?) : Meal
+
+
 }
 
 object RecetteApi {
