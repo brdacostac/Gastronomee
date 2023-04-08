@@ -66,10 +66,10 @@
     </application>
 
 
-    <!-- Permissions nécessaires pour utiliser la caméra et stocker les images dans le stockage externe -->
+    <!-- Permissions nécessaires pour utiliser la caméra, ses fonctinalités supplémentaire et stocker les images dans le stockage externe -->
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 </manifest>
