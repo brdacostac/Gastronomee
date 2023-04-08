@@ -1,6 +1,7 @@
 package fr.iut.androidproject.view.adapter
 
 import RecommendedViewHolder
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
@@ -31,9 +32,9 @@ class AdapterRecommended(var mealList : List<Recette> ) : Adapter<RecommendedVie
                     "strMealThumb" to recette.image,
                     "strArea" to recette.area,
                     "strCategory" to recette.category,
-                    "listeIngredients" to recette.ingredients,
-                    "listeMesures" to recette.measures
                 )
+                bundle.putStringArrayList("listeIngredients", ArrayList(recette.ingredients))
+                bundle.putStringArrayList("listeMesures", ArrayList(recette.measures))
 
                 val navController = Navigation.findNavController(it)
                 navController.navigate(R.id.action_fragmentLogin_to_mealDetailFragment, bundle)

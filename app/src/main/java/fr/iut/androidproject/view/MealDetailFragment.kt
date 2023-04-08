@@ -1,19 +1,17 @@
 package fr.iut.androidproject.view
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import fr.iut.androidproject.R
 import fr.iut.androidproject.view.adapter.AdapterIngredientsMeasure
-import fr.iut.androidproject.view.adapter.AdapterMeals
-import fr.iut.androidproject.view.adapter.AdapterRecommended
 
 
 class MealDetailFragment : Fragment() {
@@ -23,10 +21,12 @@ class MealDetailFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val listIngredients = arguments?.getStringArrayList("listeIngredients")
+
+        val bundle = arguments
+        val listIngredients = bundle?.getStringArrayList("listeIngredients")
         val kotlinListIngredients = ArrayList(listIngredients ?: listOf())
 
-        val listMeasures = arguments?.getStringArrayList("listeMesures")
+        val listMeasures = bundle?.getStringArrayList("listeMesures")
         val kotlinListMeasures = ArrayList(listMeasures ?: listOf())
 
         adapterIngredients = AdapterIngredientsMeasure(kotlinListIngredients)
