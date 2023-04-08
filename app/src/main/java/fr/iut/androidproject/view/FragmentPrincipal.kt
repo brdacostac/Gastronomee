@@ -24,8 +24,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import android.Manifest
+import android.app.Application
 import android.graphics.BitmapFactory
 import android.widget.Button
+import android.widget.Toast
 import androidx.core.content.FileProvider
 import fr.iut.androidproject.R
 import fr.iut.androidproject.StubFakeData.StubFakeData
@@ -42,8 +44,6 @@ import java.util.*
 
 class FragmentPrincipal : Fragment() {
 
-
-
     private var recommended = mutableListOf<fr.iut.androidproject.model.Recette>() //Pour utiliser l'api il faut utiliser cette ligne
     private var categories = mutableListOf<fr.iut.androidproject.model.Category>() //Pour utiliser l'api il faut utiliser cette ligne
 
@@ -59,29 +59,22 @@ class FragmentPrincipal : Fragment() {
     private lateinit var recommendedList: RecyclerView
     private lateinit var categoryList: RecyclerView
 
-    private lateinit var takePictureLauncher: ActivityResultLauncher<Intent>
-    private lateinit var photoFile: File
+    private val PERMISSIONS_REQUEST_CAMERA = 1
+    private lateinit var imageUri: Uri
     private lateinit var imageView: ImageView
-    private val REQUEST_IMAGE_CAPTURE = 1
-    private lateinit var photoURI: Uri
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
 
         adapterRecommended = AdapterRecommended(recommended)
         adpterCategorys = AdapterCategorys(categories)
 
 
-        takePictureLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                saveImageToGallery(photoFile.absolutePath)
-            }
-        }
-
         getCategorys() //Pour utiliser l'api il faut utiliser cette ligne
         getRecommended() //Pour utiliser l'api il faut utiliser cette ligne
+
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -98,13 +91,10 @@ class FragmentPrincipal : Fragment() {
         categoryList.adapter = adpterCategorys
         categoryList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
-        imageView = rootView.findViewById<ImageView>(R.id.imagePhoto)
-
-        val takePhotoButton = rootView.findViewById<Button>(R.id.photoButton)
-
-        takePhotoButton.setOnClickListener {
-            takePhoto(it)
-        }
+        // initialize the ImageView
+        imageView = rootView.findViewById(R.id.imagePhoto)
+        // set click listener on the photo button
+        rootView.findViewById<Button>(R.id.photoButton).setOnClickListener { takePhoto() }
 
         return rootView
     }
@@ -117,75 +107,73 @@ class FragmentPrincipal : Fragment() {
         val nameTextView = view.findViewById<TextView>(R.id.nameTextView)
         nameTextView.text = "Hi $fullName"
 
-    }
+        val imageView = view.findViewById<ImageView>(R.id.imageView)
 
-    fun takePhoto(view: View) {
-        val permission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                REQUEST_IMAGE_CAPTURE
-            )
-        } else {
-            dispatchTakePictureIntent()
-        }
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_IMAGE_CAPTURE && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            dispatchTakePictureIntent()
-        }
-    }
-    private fun dispatchTakePictureIntent() {
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-            takePictureIntent.resolveActivity(requireContext().packageManager)?.also {
-                photoFile = createImageFile()
-                photoFile.also {
-                    val photoURI: Uri = FileProvider.getUriForFile(
-                        requireContext(),
-                        "fr.iut.androidproject.fileprovider",
-                        it
-                    )
-                    this.photoURI = photoURI
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                    takePictureLauncher.launch(takePictureIntent)
-                }
+        view.findViewById<Button>(R.id.photoButton).setOnClickListener {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                dispatchTakePictureIntent()
+            } else {
+                requestCameraPermission()
             }
         }
+
     }
 
-    @Throws(IOException::class)
-    private fun createImageFile(): File {
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val storageDir: File? = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile(
-            "JPEG_${timeStamp}_",
-            ".jpg",
-            storageDir
-        ).apply {
-            val savedImagePath = absolutePath
-            imageView.setImageBitmap(BitmapFactory.decodeFile(savedImagePath))
+    private fun takePhoto() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            // Permission to access the camera is already granted, start the camera intent
+            dispatchTakePictureIntent()
+        } else {
+            // Permission to access the camera has not been granted yet, request it
+            requestPermissions(arrayOf(Manifest.permission.CAMERA), PERMISSIONS_REQUEST_CAMERA)
         }
     }
 
-    private fun saveImageToGallery(savedImagePath: String) {
-        val photoFile = File(savedImagePath)
-        val values = ContentValues().apply {
-            put(MediaStore.Images.Media.DISPLAY_NAME, photoFile.name)
-            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-            put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+    private fun requestCameraPermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.CAMERA)) {
+            androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setNegativeButton("permission_request_negative_button", null)
+                .show()
+        } else {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.CAMERA),
+                PERMISSIONS_REQUEST_CAMERA
+            )
         }
-        val externalUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        val contentResolver = requireContext().contentResolver
+    }
 
-        val uri = contentResolver.insert(externalUri, values)
 
-        Picasso.get()
-            .load(uri)
-            .into(imageView)
-        imageView.setImageBitmap(BitmapFactory.decodeFile(savedImagePath))
+
+    private fun dispatchTakePictureIntent() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        imageUri = createUri()
+        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+        takePictureLauncher.launch(takePictureIntent)
+    }
+
+    private fun createUri(): Uri {
+        val imageFile = File(requireContext().filesDir, "my_images.jpg")
+        val authority = "${requireActivity().packageName}.fileprovider"
+        return FileProvider.getUriForFile(requireContext(), authority, imageFile)
+    }
+
+    private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            // La photo a été prise avec succès, faire quelque chose avec l'image
+            val bitmap = BitmapFactory.decodeStream(requireActivity().contentResolver.openInputStream(imageUri))
+            imageView.setImageBitmap(bitmap)
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        if (requestCode == PERMISSIONS_REQUEST_CAMERA) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                dispatchTakePictureIntent()
+            } else {
+                Toast.makeText(requireContext(), "permission_camera_denied", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun transformListIngredients() : MutableList<String>{
@@ -250,9 +238,6 @@ class FragmentPrincipal : Fragment() {
                     if(recette.strMeasure18?.isNotEmpty() == true && recette.strMeasure18.isNotBlank()) listMeasures.add(recette.strMeasure18)
                     if(recette.strMeasure19?.isNotEmpty() == true && recette.strMeasure19.isNotBlank()) listMeasures.add(recette.strMeasure19)
                     if(recette.strMeasure20?.isNotEmpty() == true && recette.strMeasure20.isNotBlank()) listMeasures.add(recette.strMeasure20)
-
-
-
                 }
             } catch (e: Exception) {
                 _status.value = "Failure: ${e.message}"
@@ -329,6 +314,4 @@ class FragmentPrincipal : Fragment() {
             }
         }
     }
-
 }
-
