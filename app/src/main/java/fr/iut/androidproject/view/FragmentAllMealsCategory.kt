@@ -68,27 +68,41 @@ class FragmentAllMealsCategory : Fragment() {
         return rootView
     }
 
+    //J'explique cette methode, en fait dans mon API, la requete de getAllMealsByCategory m'envoie pas tout les details de la recette
+    // seulement l'id, le nom, l'image et la category, j'ai donc du de recuperer cette id et mettre dans une autre requete
+    // le getMealById pour recuperer les details de la recette et l'afficher quand l'utilisateur clique sur une recette
+    // car si je faisais pas ça, j'aurais pas pu afficher les details de la recette comme le recipe, area, ingredients, etc...
+
+    //En resume cette methode va transformer une liste de recette avec seulement l'id, le nom, l'image et la category
+    // en une liste de recette avec tous les details de la recette
+
     private fun getMeals(categoryName: String) {
         lifecycleScope.launch {
             try {
-                val listResult = RecetteApi.retrofitService.getMealsByCategory(categoryName)
+                val listMealsCategory = RecetteApi.retrofitService.getMealsByCategory(categoryName)
+                val listIngredients = mutableListOf<String>() //CHANGER ça
+                val listMeasures = mutableListOf<String>() //CHANGER ça
 
-                _status.value = "Success: ${listResult.meals.size} C'est bon"
+                _status.value = "Success: ${listMealsCategory.meals.size} C'est bon"
                 mealsByCategory.addAll(mealsByCategory)
-                adapterMeals.updateList(listResult.meals.map {
-                    val listIngredients = mutableListOf<String>() //CHANGER ça
-                    val listMeasures = mutableListOf<String>() //CHANGER ça
-                    fr.iut.androidproject.model.Recette(
-                        it.idMeal,
-                        it.strMeal,
-                        it.strInstructions,
-                        it.strMealThumb,
-                        it.strArea,
-                        it.strCategory,
-                        listIngredients,
-                        listMeasures
-                    )
-                })
+
+                listMealsCategory.meals.iterator().forEach {
+                    val listResult = RecetteApi.retrofitService.getMealById(it.idMeal)
+                    mealsByCategory.addAll(mealsByCategory)
+
+                    adapterMeals.updateAddList(listResult.meals.map {
+                        fr.iut.androidproject.model.Recette(
+                            it.idMeal,
+                            it.strMeal,
+                            it.strInstructions,
+                            it.strMealThumb,
+                            it.strArea,
+                            it.strCategory,
+                            listIngredients,
+                            listMeasures
+                        )
+                    })
+                }
             } catch (e: Exception) {
                 _status.value = "Failure: ${e.message}"
             }
