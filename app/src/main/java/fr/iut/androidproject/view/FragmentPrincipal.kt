@@ -68,20 +68,28 @@ class FragmentPrincipal : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if(savedInstanceState!=null){
+            val uriString = savedInstanceState.getString("IMAGE_URI")
+            if (uriString != null) {
+                imageUri = createUri()
+                imageUri = Uri.parse(uriString)
+                val bitmap = BitmapFactory.decodeStream(requireActivity().contentResolver.openInputStream(imageUri))
+                imageView.setImageBitmap(bitmap)
+            }
+        }
+
         adapterRecommended = AdapterRecommended(recommended)
         adpterCategorys = AdapterCategorys(categories)
 
-
         getCategorys() //Pour utiliser l'api il faut utiliser cette ligne
         getRecommended() //Pour utiliser l'api il faut utiliser cette ligne
-
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_main, container, false)
-
 
         recommendedList = rootView.findViewById(R.id.recommended)
         recommendedList.adapter = adapterRecommended
@@ -91,9 +99,8 @@ class FragmentPrincipal : Fragment() {
         categoryList.adapter = adpterCategorys
         categoryList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
-        // initialize the ImageView
         imageView = rootView.findViewById(R.id.imagePhoto)
-        // set click listener on the photo button
+
         rootView.findViewById<Button>(R.id.photoButton).setOnClickListener { takePhoto() }
 
         return rootView
@@ -107,8 +114,6 @@ class FragmentPrincipal : Fragment() {
         val nameTextView = view.findViewById<TextView>(R.id.nameTextView)
         nameTextView.text = "Hi $fullName"
 
-        val imageView = view.findViewById<ImageView>(R.id.imageView)
-
         view.findViewById<Button>(R.id.photoButton).setOnClickListener {
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                 dispatchTakePictureIntent()
@@ -116,15 +121,17 @@ class FragmentPrincipal : Fragment() {
                 requestCameraPermission()
             }
         }
+    }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("IMAGE_URI", imageUri.toString())
     }
 
     private fun takePhoto() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            // Permission to access the camera is already granted, start the camera intent
             dispatchTakePictureIntent()
         } else {
-            // Permission to access the camera has not been granted yet, request it
             requestPermissions(arrayOf(Manifest.permission.CAMERA), PERMISSIONS_REQUEST_CAMERA)
         }
     }
@@ -143,8 +150,6 @@ class FragmentPrincipal : Fragment() {
         }
     }
 
-
-
     private fun dispatchTakePictureIntent() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         imageUri = createUri()
@@ -160,7 +165,6 @@ class FragmentPrincipal : Fragment() {
 
     private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            // La photo a été prise avec succès, faire quelque chose avec l'image
             val bitmap = BitmapFactory.decodeStream(requireActivity().contentResolver.openInputStream(imageUri))
             imageView.setImageBitmap(bitmap)
         }
@@ -242,7 +246,6 @@ class FragmentPrincipal : Fragment() {
             } catch (e: Exception) {
                 _status.value = "Failure: ${e.message}"
             }
-
         }
         return listMeasures
     }
@@ -274,27 +277,6 @@ class FragmentPrincipal : Fragment() {
         }
     }
 
-    /*
-    private fun getRecettes() {
-        lifecycleScope.launch {
-            try {
-                val listResult = RecetteApi.retrofitService.getRecettes()
-                _status.value = "Success: ${listResult.meals.size} C'est bon"
-                recettes.addAll(recettes)
-                adapterMeals.updateList(listResult.meals.map {
-                    fr.iut.androidproject.model.Recette(
-                        it.idMeal,
-                        it.strMeal,
-                        it.strInstructions,
-                        it.strMealThumb,
-                    )
-                })
-            } catch (e: Exception) {
-                _status.value = "Failure: ${e.message}"
-            }
-        }
-    }
-     */
 
     private fun getCategorys() {
         lifecycleScope.launch {
