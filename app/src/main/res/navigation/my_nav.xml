@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_mainFragment_to_fragmentLogin"
             app:destination="@id/fragmentLogin" />
+        <action
+            android:id="@+id/action_mainFragment_to_fragmentRegister"
+            app:destination="@id/fragmentRegister" />
     </fragment>
     <fragment
         android:id="@+id/fragmentLogin"
@@ -42,5 +45,14 @@
         <action
             android:id="@+id/action_fragmentAllMealsCategory_to_mealDetailFragment"
             app:destination="@id/mealDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentRegister"
+        android:name="fr.iut.androidproject.view.FragmentRegister"
+        android:label="fragment_register2"
+        tools:layout="@layout/fragment_register" >
+        <action
+            android:id="@+id/action_fragmentRegister_to_mainFragment"
+            app:destination="@id/mainFragment" />
     </fragment>
 </navigation>

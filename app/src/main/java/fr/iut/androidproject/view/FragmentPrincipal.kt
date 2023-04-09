@@ -1,14 +1,34 @@
 package fr.iut.androidproject.view
 
+import android.app.Activity
+import android.content.ContentValues
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
+import android.Manifest
+import android.app.Application
+import android.graphics.BitmapFactory
+import android.widget.Button
+import android.widget.Toast
+import androidx.core.content.FileProvider
 import fr.iut.androidproject.R
 import fr.iut.androidproject.StubFakeData.StubFakeData
 import fr.iut.androidproject.model.Category
@@ -16,14 +36,18 @@ import fr.iut.androidproject.network.RecetteApi
 import fr.iut.androidproject.view.adapter.AdapterCategorys
 import fr.iut.androidproject.view.adapter.AdapterRecommended
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 class FragmentPrincipal : Fragment() {
-
-    private val stubFakeData = StubFakeData()
 
     private var recommended = mutableListOf<fr.iut.androidproject.model.Recette>() //Pour utiliser l'api il faut utiliser cette ligne
     private var categories = mutableListOf<fr.iut.androidproject.model.Category>() //Pour utiliser l'api il faut utiliser cette ligne
 
+    //private val stubFakeData = StubFakeData()
     //private var recommended = stubFakeData.chargeRecommended() //UTILISE DES FAUSSES DONNEES CAR L'API NE FONCTIONNE PLUS
     //private var categories = stubFakeData.chargeCategories() //UTILISE DES FAUSSES DONNEES CAR L'API NE FONCTIONNE PLUS
 
@@ -35,22 +59,38 @@ class FragmentPrincipal : Fragment() {
     private lateinit var recommendedList: RecyclerView
     private lateinit var categoryList: RecyclerView
 
+    private val PERMISSIONS_REQUEST_CAMERA = 1
+    private lateinit var imageUri: Uri
+    private lateinit var imageView: ImageView
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if(savedInstanceState!=null){
+            val uriString = savedInstanceState.getString("IMAGE_URI")
+            if (uriString != null) {
+                imageUri = createUri()
+                imageUri = Uri.parse(uriString)
+                val bitmap = BitmapFactory.decodeStream(requireActivity().contentResolver.openInputStream(imageUri))
+                imageView.setImageBitmap(bitmap)
+            }
+        }
 
         adapterRecommended = AdapterRecommended(recommended)
         adpterCategorys = AdapterCategorys(categories)
 
-
         getCategorys() //Pour utiliser l'api il faut utiliser cette ligne
         getRecommended() //Pour utiliser l'api il faut utiliser cette ligne
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_main, container, false)
+
         recommendedList = rootView.findViewById(R.id.recommended)
         recommendedList.adapter = adapterRecommended
         recommendedList.layoutManager = LinearLayoutManager(context)
@@ -59,7 +99,85 @@ class FragmentPrincipal : Fragment() {
         categoryList.adapter = adpterCategorys
         categoryList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
+        imageView = rootView.findViewById(R.id.imagePhoto)
+
+        rootView.findViewById<Button>(R.id.photoButton).setOnClickListener { takePhoto() }
+
         return rootView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val fullName = arguments?.getString("USER_FULLNAME")
+
+        val nameTextView = view.findViewById<TextView>(R.id.nameTextView)
+        nameTextView.text = "Hi $fullName"
+
+        view.findViewById<Button>(R.id.photoButton).setOnClickListener {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                dispatchTakePictureIntent()
+            } else {
+                requestCameraPermission()
+            }
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("IMAGE_URI", imageUri.toString())
+    }
+
+    private fun takePhoto() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            dispatchTakePictureIntent()
+        } else {
+            requestPermissions(arrayOf(Manifest.permission.CAMERA), PERMISSIONS_REQUEST_CAMERA)
+        }
+    }
+
+    private fun requestCameraPermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.CAMERA)) {
+            androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setNegativeButton("permission_request_negative_button", null)
+                .show()
+        } else {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.CAMERA),
+                PERMISSIONS_REQUEST_CAMERA
+            )
+        }
+    }
+
+    private fun dispatchTakePictureIntent() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        imageUri = createUri()
+        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+        takePictureLauncher.launch(takePictureIntent)
+    }
+
+    private fun createUri(): Uri {
+        val imageFile = File(requireContext().filesDir, "my_images.jpg")
+        val authority = "${requireActivity().packageName}.fileprovider"
+        return FileProvider.getUriForFile(requireContext(), authority, imageFile)
+    }
+
+    private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val bitmap = BitmapFactory.decodeStream(requireActivity().contentResolver.openInputStream(imageUri))
+            imageView.setImageBitmap(bitmap)
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        if (requestCode == PERMISSIONS_REQUEST_CAMERA) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                dispatchTakePictureIntent()
+            } else {
+                Toast.makeText(requireContext(), "permission_camera_denied", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun transformListIngredients() : MutableList<String>{
@@ -124,14 +242,10 @@ class FragmentPrincipal : Fragment() {
                     if(recette.strMeasure18?.isNotEmpty() == true && recette.strMeasure18.isNotBlank()) listMeasures.add(recette.strMeasure18)
                     if(recette.strMeasure19?.isNotEmpty() == true && recette.strMeasure19.isNotBlank()) listMeasures.add(recette.strMeasure19)
                     if(recette.strMeasure20?.isNotEmpty() == true && recette.strMeasure20.isNotBlank()) listMeasures.add(recette.strMeasure20)
-
-
-
                 }
             } catch (e: Exception) {
                 _status.value = "Failure: ${e.message}"
             }
-
         }
         return listMeasures
     }
@@ -163,27 +277,6 @@ class FragmentPrincipal : Fragment() {
         }
     }
 
-    /*
-    private fun getRecettes() {
-        lifecycleScope.launch {
-            try {
-                val listResult = RecetteApi.retrofitService.getRecettes()
-                _status.value = "Success: ${listResult.meals.size} C'est bon"
-                recettes.addAll(recettes)
-                adapterMeals.updateList(listResult.meals.map {
-                    fr.iut.androidproject.model.Recette(
-                        it.idMeal,
-                        it.strMeal,
-                        it.strInstructions,
-                        it.strMealThumb,
-                    )
-                })
-            } catch (e: Exception) {
-                _status.value = "Failure: ${e.message}"
-            }
-        }
-    }
-     */
 
     private fun getCategorys() {
         lifecycleScope.launch {
@@ -203,6 +296,4 @@ class FragmentPrincipal : Fragment() {
             }
         }
     }
-
 }
-

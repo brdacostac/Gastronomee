@@ -24,8 +24,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+                <Button
+                    android:id="@+id/photoButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Photo"
+                    app:layout_constraintBottom_toTopOf="@+id/imagePhoto"
+                    app:layout_constraintEnd_toEndOf="@+id/imagePhoto"
+                    app:layout_constraintStart_toStartOf="@+id/imagePhoto"
+                    app:layout_constraintTop_toTopOf="parent" />
+
                 <ImageView
-                    android:id="@+id/imageView2"
+                    android:id="@+id/imagePhoto"
                     android:layout_width="70dp"
                     android:layout_height="67dp"
                     android:layout_marginTop="32dp"
@@ -34,7 +44,7 @@
                     app:layout_constraintBottom_toTopOf="@+id/editTextTextPersonName"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.88"
-                    app:layout_constraintStart_toEndOf="@+id/textView"
+                    app:layout_constraintStart_toEndOf="@+id/nameTextView"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.0" />
 
@@ -69,16 +79,16 @@
                     android:text="@string/cook_eat"
                     android:textColor="#2C2C2C"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/textView"
-                    app:layout_constraintTop_toBottomOf="@+id/textView"
+                    app:layout_constraintStart_toStartOf="@+id/nameTextView"
+                    app:layout_constraintTop_toBottomOf="@+id/nameTextView"
                     app:layout_constraintVertical_bias="0.0" />
 
                 <TextView
-                    android:id="@+id/textView"
+                    android:id="@+id/nameTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
 
-                    android:text="Hi Bruno"
+                    android:text="Hi User"
                     android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                     android:textColor="#E63A3A"
                     android:textSize="30sp"
