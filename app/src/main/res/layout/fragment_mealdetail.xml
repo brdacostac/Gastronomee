@@ -50,6 +50,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="32dp"
                     android:text="title"
+                    android:textColor="#FF191919"
                     android:textSize="35sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -64,6 +65,7 @@
                     android:layout_marginLeft="64dp"
                     android:layout_marginTop="32dp"
                     android:text="Area"
+                    android:textColor="#FF191919"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/imageMeal" />
@@ -76,6 +78,7 @@
                     android:layout_marginEnd="64dp"
                     android:layout_marginRight="64dp"
                     android:text="Category"
+                    android:textColor="#FF191919"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/imageMeal" />
@@ -136,6 +139,7 @@
                     android:layout_marginLeft="8dp"
                     android:layout_marginTop="24dp"
                     android:text="Ingredients"
+                    android:textColor="#FF191919"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"

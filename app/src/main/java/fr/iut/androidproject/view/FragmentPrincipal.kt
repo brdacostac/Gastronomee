@@ -32,6 +32,7 @@ import androidx.core.content.FileProvider
 import fr.iut.androidproject.R
 import fr.iut.androidproject.StubFakeData.StubFakeData
 import fr.iut.androidproject.model.Category
+import fr.iut.androidproject.network.Meal
 import fr.iut.androidproject.network.RecetteApi
 import fr.iut.androidproject.view.adapter.AdapterCategorys
 import fr.iut.androidproject.view.adapter.AdapterRecommended
@@ -67,7 +68,7 @@ class FragmentPrincipal : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        /*
         if(savedInstanceState!=null){
             val uriString = savedInstanceState.getString("IMAGE_URI")
             if (uriString != null) {
@@ -77,6 +78,7 @@ class FragmentPrincipal : Fragment() {
                 imageView.setImageBitmap(bitmap)
             }
         }
+        */
 
         adapterRecommended = AdapterRecommended(recommended)
         adpterCategorys = AdapterCategorys(categories)
@@ -123,10 +125,13 @@ class FragmentPrincipal : Fragment() {
         }
     }
 
+    /*
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString("IMAGE_URI", imageUri.toString())
     }
+
+     */
 
     private fun takePhoto() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
@@ -180,11 +185,16 @@ class FragmentPrincipal : Fragment() {
         }
     }
 
-    private fun transformListIngredients() : MutableList<String>{
+    fun transformListIngredients(idMeal: String?) : MutableList<String>{
         val listIngredients = mutableListOf<String>()
         lifecycleScope.launch {
             try {
-                val listResult = RecetteApi.retrofitService.getRecommended()
+                val listResult : Meal
+                if(idMeal==null)
+                     listResult = RecetteApi.retrofitService.getRecommended()
+                else
+                     listResult = RecetteApi.retrofitService.getMealById(idMeal)
+
                 for (recette in listResult.meals) {
                     if (recette.strIngredient1?.isNotEmpty() == true && recette.strIngredient1.isNotBlank()) listIngredients.add(recette.strIngredient1)
                     if (recette.strIngredient2?.isNotEmpty() == true && recette.strIngredient2.isNotBlank()) listIngredients.add(recette.strIngredient2)
@@ -216,11 +226,16 @@ class FragmentPrincipal : Fragment() {
         return listIngredients
     }
 
-    private fun transformListMeasures() : MutableList<String>{
+    fun transformListMeasures(idMeal: String?) : MutableList<String>{
         val listMeasures = mutableListOf<String>()
         lifecycleScope.launch {
             try {
-                val listResult = RecetteApi.retrofitService.getRecommended()
+                val listResult : Meal
+                if(idMeal==null)
+                    listResult = RecetteApi.retrofitService.getRecommended()
+                else
+                    listResult = RecetteApi.retrofitService.getMealById(idMeal)
+
                 for (recette in listResult.meals) {
                     if(recette.strMeasure1?.isNotEmpty() == true && recette.strMeasure1.isNotBlank()) listMeasures.add(recette.strMeasure1)
                     if(recette.strMeasure2?.isNotEmpty() == true && recette.strMeasure2.isNotBlank()) listMeasures.add(recette.strMeasure2)
@@ -254,13 +269,12 @@ class FragmentPrincipal : Fragment() {
         lifecycleScope.launch {
             try {
                 val listResult = RecetteApi.retrofitService.getRecommended()
-                val listIngredients : MutableList<String> = transformListIngredients()
-                val listMeasures : MutableList<String> = transformListMeasures()
+                val recommendedList: MutableList<fr.iut.androidproject.model.Recette> = mutableListOf()
 
-                _status.value = "Success: ${listResult.meals.size} C'est bon"
-                recommended.addAll(recommended)
-                adapterRecommended.updateList(listResult.meals.map {
-                    fr.iut.androidproject.model.Recette(
+                listResult.meals.forEach {
+                   val listIngredients = transformListIngredients(it.idMeal)
+                    val listMeasures = transformListMeasures(it.idMeal)
+                    val recette = fr.iut.androidproject.model.Recette(
                         it.idMeal,
                         it.strMeal,
                         it.strInstructions,
@@ -270,13 +284,16 @@ class FragmentPrincipal : Fragment() {
                         listIngredients,
                         listMeasures
                     )
-                })
+                    recommendedList.add(recette)
+                }
+                _status.value = "Success: ${listResult.meals.size} C'est bon"
+                recommended.addAll(recommended)
+                adapterRecommended.updateList(recommendedList)
             } catch (e: Exception) {
                 _status.value = "Failure: ${e.message}"
             }
         }
     }
-
 
     private fun getCategorys() {
         lifecycleScope.launch {

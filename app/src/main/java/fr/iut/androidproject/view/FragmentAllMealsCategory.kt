@@ -80,8 +80,7 @@ class FragmentAllMealsCategory : Fragment() {
         lifecycleScope.launch {
             try {
                 val listMealsCategory = RecetteApi.retrofitService.getMealsByCategory(categoryName)
-                val listIngredients = mutableListOf<String>() //CHANGER ça
-                val listMeasures = mutableListOf<String>() //CHANGER ça
+                val mealsNotRecommended = true;
 
                 _status.value = "Success: ${listMealsCategory.meals.size} C'est bon"
                 mealsByCategory.addAll(mealsByCategory)
@@ -89,7 +88,8 @@ class FragmentAllMealsCategory : Fragment() {
                 listMealsCategory.meals.iterator().forEach {
                     val listResult = RecetteApi.retrofitService.getMealById(it.idMeal)
                     mealsByCategory.addAll(mealsByCategory)
-
+                    val listIngredients : MutableList<String> = FragmentPrincipal().transformListIngredients(it.idMeal)
+                    val listMeasures : MutableList<String> = FragmentPrincipal().transformListMeasures(it.idMeal)
                     adapterMeals.updateAddList(listResult.meals.map {
                         fr.iut.androidproject.model.Recette(
                             it.idMeal,
